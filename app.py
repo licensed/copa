@@ -6,7 +6,7 @@ from flask import (Flask, flash, g, redirect, render_template, request,
 from flask_login import (LoginManager, current_user, login_required,
                          login_user, logout_user)
 from flaskext.markdown import Markdown
-from models import Login, Aposta, Time, db
+from models import Login, Aposta, Time, Partida, db
 from sqlalchemy import exc
 from werkzeug.security import check_password_hash as chpass
 
@@ -158,7 +158,6 @@ def time_add():
 def time_update(id):
     time = Time.query.filter_by(id=id).first()
     if request.method == "POST":
-        print("post")
         time.sigla = request.form["sigla"]
         time.nome = request.form["nome"]
         db.session.commit()
@@ -175,6 +174,41 @@ def time_delete(id):
     return redirect(url_for("times"))
 
 
+@app.route("/partidas", methods=["POST", "GET"])
+@login_required
+# Grupo Local Time1 Time2 placar_time1 placar_time2
+def partidas():
+    if request.method == "POST":
+        nome = request.form["nome"]
+        sigla = request.form["sigla"]
+        local = request.form["local"]
+        time = Time(nome=nome, sigla=sigla)
+        db.session.add(time)
+        db.session.commit()
+        return redirect(url_for("partidas"))
+    else:
+        partidas = Partida.query.all()
+        return render_template("partidas.html", result=partidas)
+
+
+@app.route("/partida_add", methods=["POST", "GET"])
+@login_required
+def partida_add():
+    times = Time.query.all()
+    if request.method == "POST":
+        local = request.form.get('local')
+        time1 = request.form.get('time1')
+        time2 = request.form.get('time2')
+        placar_time1 = request.form.get('placar_time1')
+        placar_time2 = request.form.get('placar_time2')
+        partida = Partida(local=local, time1_id=time1, time2_id=time2, placar_time1=placar_time1, placar_time2=placar_time2)
+        db.session.add(partida)
+        db.session.commit()
+        return redirect(url_for("partidas"))
+    else:
+        return render_template("partida_add.html", times=times)
+
+
 @app.route("/logout")
 @login_required
 def logout():
@@ -187,13 +221,11 @@ def logout():
 def login():
     if request.method == "POST":
         log_user = Login.query.filter_by(username=request.form["username"]).first()
-        print("aew", log_user)
         if log_user:
             if log_user.username == request.form["username"] and (
             chpass(log_user.password, request.form["password"]) == True):
                 login_user(log_user)
                 return redirect(url_for("index"))
-        print("nao entrou")
 
         return redirect(url_for("login"))
 

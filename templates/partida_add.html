@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Adicionar Partida</h3>
+
+<div class="form">
+<div class="container">
+  <form class="form-horizontal" method="POST" action="{{ url_for('partida_add') }}">
+    <div class="form-group">
+      <label class="control-label col-sm-0" for="text">Local:</label>
+      <div class="col-sm-20">
+        <input type="text" class="form-control" id="local" placeholder="Local" name="local">
+      </div>
+
+            <select name="time1" class="selectpicker form-control">
+              {% for t in times %}
+              <option value="{{ t }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+            <input type="text" class="form-control" id="placar_time1" placeholder="Gols" name="placar_time1">
+            <select name="time2" class="selectpicker form-control">
+              {% for t in times %}
+              <option value="{{ t }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+            <input type="text" class="form-control" id="placar_time2" placeholder="Gols" name="placar_time2">
+    </div>
+    </div>
+
+    <input class="btn btn-info" type="submit" name="" value="Adicionar">
+  </div>    
+</form>
+</div>
+
+{% endblock %}

@@ -41,8 +41,6 @@ class Time(db.Model):
 
 class Partida(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    grupo = db.Column(db.String(1))
-    hora = db.Column(db.DateTime())
     local = db.Column(db.String(50))
     time1_id = db.Column(db.Integer, db.ForeignKey('time.id'))
     time1 = db.relationship('Time', foreign_keys=time1_id)
