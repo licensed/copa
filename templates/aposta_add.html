@@ -6,13 +6,14 @@
   <div class="card">
     <div class="card-block">
       <p class="card-text text-justify">{{partida.local}}: {{ partida.time1_id }} Vs {{ partida.time2_id }}</p>
-      <a class="btn btn-info" href="{{ url_for('aposta_add', partida_id=r.id) }}">Apostar</a>      
+  <form class="form-horizontal" method="POST" action="">
+    <input type="text" class="form-control" id="placar_time1" placeholder="Gols" name="placar_time1" value="{{partida.placar_time1}}">
+    <input type="text" class="form-control" id="placar_time2" placeholder="Gols" name="placar_time2" value="{{partida.placar_time2}}">
+    <input class="btn btn-submit" type="submit" name="" value="Submit">
+  </form>      
+      <a class="btn btn-info" href="{{ url_for('aposta_add', partida_id=partida) }}">Apostar</a>
     </div>
   </div>
-  {% else %}
   {% endif %}  
 </div>
-    <div class="card-block">
-      <a class="btn btn-info" href="{{ url_for('partida_add') }}">Cadastrar</a>
-    </div>
 {% endblock %}

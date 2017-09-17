@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Editar Partida</h3>
+
+{% if partida %}
+
+<div class="form">
+<div class="container">
+  <form class="form-horizontal" method="POST" action="">
+    <div class="form-group">
+      {{partida.time1_id}} X {{partida.time2_id}}
+      <div class="col-sm-20">
+        <input type="text" class="form-control" id="local" placeholder="Local" name="local" value="{{partida.local}}">
+      </div>
+            <input type="text" class="form-control" id="placar_time1" placeholder="Gols" name="placar_time1" value="{{partida.placar_time1}}">
+            <input type="text" class="form-control" id="placar_time2" placeholder="Gols" name="placar_time2" value="{{partida.placar_time2}}">
+    </div>
+    </div>
+
+    <input class="btn btn-info" type="submit" name="" value="Editar">
+  </div>    
+</form>
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -70,6 +70,7 @@ def sign():
 @app.route("/", methods=["POST", "GET"])
 @login_required
 def index():
+    users = Login.query.all()
     if request.method == "POST":
         fname = request.form["name"]
 
@@ -78,7 +79,7 @@ def index():
         db.session.commit()
         return redirect(url_for("result"))
 
-    return render_template("index.html")
+    return render_template("index.html", users=users)
 
 
 @app.route("/result", methods=["POST", "GET"])
@@ -93,12 +94,6 @@ def result():
 def public():
     aposta = Aposta.query.all()
     return render_template("public.html", result=aposta)
-
-
-@app.route("/public/<int:aposta_id>", methods=["POST", "GET"])
-def aposta(aposta_id):
-    aposta = Aposta.query.filter_by(id=aposta_id).first()
-    return render_template("post.html", result=aposta)
 
 
 @app.route("/times", methods=["POST", "GET"])
@@ -156,18 +151,29 @@ def time_delete(id):
 @login_required
 # Local Time1 Time2 placar_time1 placar_time2
 def partidas():
+    print("PARTIDAS", request.method)
+    if request.method == "POST":
+        gols_time1 = request.args.get('gols_time1')
+        gols_time2 = request.args.get('gols_time2')
+        print(gols_time1, gols_time2)
     partidas = Partida.query.all()
     return render_template("partidas.html", result=partidas)
 
 
+@app.route("/aposta/<int:aposta_id>", methods=["POST", "GET"])
+def aposta(aposta_id):
+    aposta = Aposta.query.filter_by(id=aposta_id).first()
+    return render_template("post.html", result=aposta)
+
+
 @app.route("/apostas", methods=["POST", "GET"])
 @login_required
-#
-def apostas():
-    apostas = Aposta.query.all()
-    for x in apostas:
-        print(x.partida_id)
-    return render_template("apostas.html", result=apostas)
+def apostas(usuario=None):
+    if request.method == "POST":
+        pass
+    else:
+        apostas = Aposta.query.all()
+        return render_template("apostas.html", result=apostas)
 
 
 @app.route("/partida_add", methods=["POST", "GET"])
@@ -187,20 +193,43 @@ def partida_add():
     else:
         return render_template("partida_add.html", times=times)
 
-
-@app.route("/aposta_add/<int:partida_id>")
+@app.route("/partida_update/<int:id>", methods=["POST", "GET"])
 @login_required
-#usuario, partida, placar_time1, placar_time2 (hora, edicao, pontuacao)
-def aposta_add(partida_id):
-    gols_time1 = request.form.get('gols_time1')
-    gols_time2 = request.form.get('gols_time2')
-    print("else", gols_time1)
-    if gols_time1 and gols_time2:
-        print("aew", gols_time1)
-        aposta = Aposta(usuario=current_user, partida_id=partida_id, placar_time1=gols_time1, placar_time2=gols_time2)
-        db.session.add(aposta)
+def partida_update(id):
+    partida = Partida.query.filter_by(id=id).first()
+    if request.method == "POST":
+        partida.placar_time1 = request.form["placar_time1"]
+        partida.placar_time2 = request.form["placar_time2"]
+        partida.local = request.form["local"]
+        print(partida.placar_time1)
         db.session.commit()
-    return redirect(url_for("apostas"))
+        return redirect(url_for("partidas"))
+
+    return render_template("partida_update.html", partida=partida)
+
+
+@app.route("/partida_delete/<int:id>")
+@login_required
+def partida_delete(id):
+    db.session.query(Partida).filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for("partidas"))
+
+
+@app.route("/aposta_add/<partida_id>", methods=["POST", "GET"])
+@login_required
+# usuario, partida, placar_time1, placar_time2 (hora, edicao, pontuacao)
+def aposta_add(partida_id):
+    partida = Partida.query.filter_by(id=partida_id).first()
+    if request.method == "POST":
+        gols_time1 = request.args.get('placar_time1')
+        gols_time2 = request.args.get('placar_time2')
+        if gols_time1 and gols_time2:
+            aposta = Aposta(usuario=current_user, partida_id=partida_id, placar_time1=gols_time1, placar_time2=gols_time2)
+            db.session.add(aposta)
+            db.session.commit()
+    else:
+        return render_template("aposta_add.html", partida=partida)
 
 
 @app.route("/logout")

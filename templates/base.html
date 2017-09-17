@@ -17,25 +17,29 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="{{ url_for("index") }}">Apostas<span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="{{ url_for("index") }}">Usuários<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for("result") }}">Result</a>
-        </li>
+          <a class="nav-link" href="{{ url_for("times") }}">Times</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for("partidas") }}">Partidas</a>
+          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for("apostas") }}">Apostas</a>
+          </li>          
         {% if current_user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for("logout") }}">Logout</a>
         </li>
         {% else %}
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for("sign") }}">Register</a>
+        </li>        
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for("login") }}">Login</a>
         </li>
-        {% endif %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for("sign") }}">Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for("public") }}">Public</a>
+        {% endif %}          
       </ul>
     </div>
   </nav>

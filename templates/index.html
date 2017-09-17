@@ -1,35 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<h3>Apostas</h3>
-
-<div class="form">
-
-  <form class="form-group" action="{{ url_for("index") }}" method="POST">
-
-    <div class="row">
-      <div class="col-12">
-        <label for="exampleInputPassword1">Title</label>
-        <input type="text" class="form-control" name="name" id="exampleInputPassword1" placeholder="Title">
-      </div>
-
-      <div class="col-12">
-        <label for="exampleTextarea">Content</label>
-        <textarea class="form-control" rows="12" id="exampleTextarea" name="content" rows="3"></textarea>
-      </div>
+<h3>Usuários</h3>
+{% for u in users %}
+<br>
+  <div class="card">
+    <div class="card-block">
+      <a href="{{ url_for("aposta", aposta_id=u.id)}}"</a> <p class="card-text text-justify">{{ u.username }}</p>
     </div>
-    <br>
-    <input class="btn btn-info" type="submit" name="" value="Apostas">
-
-  </form>
-
-</div>
-
-
-</div>
-
-
-
-
+  </div>
+    {% endfor %}
 {% endblock %}

@@ -7,11 +7,16 @@
 <br>
   <div class="card">
     <div class="card-block">
-      <p class="card-text text-justify">{{r.aposta}}: {{ r.placar_time1 }} Vs {{ r.placar_time2 }}</p>
-      <p class="card-text text-justify">{{ r.placar_time1 }} - {{ r.placar_time2 }}</p>
+      {% if not r.partida.placar_time1 %}
+      <p class="card-text text-justify">{{r.partida.local}}: {{ r.partida.time1_id }} Vs {{ r.partida.time2_id }}</p>
+      <p class="card-text text-justify">{{ r.placar_time1 }} X {{ r.placar_time2 }}</p>
+      {% else %}
+      <p class="card-text text-justify">{{r.partida.local}}: {{ r.partida.time1_id }} Vs {{ r.partida.time2_id }}</p>
+      <p class="card-text text-justify">{{ r.partida.placar_time1 }} X {{ r.partida.placar_time2 }}</p>
+      <p class="card-text text-justify">{{ r.placar_time1 }} X {{ r.placar_time2 }}</p>      
+      {% endif %}
     </div>
   </div>
-
     {% endfor %}
 </div>
 {% endif %}
