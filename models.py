@@ -68,4 +68,4 @@ class Aposta(db.Model):
                                           name='aposta'),)
 
     def __repr__(self):
-        return "Apostas {}".format(self.login_id)
+        return "Apostas {}".format(self.id)

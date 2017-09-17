@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Apostas</h3>
+{% if result %}
+{% for r in result %}
+<br>
+  <div class="card">
+    <div class="card-block">
+      <p class="card-text text-justify">{{r.aposta}}: {{ r.placar_time1 }} Vs {{ r.placar_time2 }}</p>
+      <p class="card-text text-justify">{{ r.placar_time1 }} - {{ r.placar_time2 }}</p>
+    </div>
+  </div>
+
+    {% endfor %}
+</div>
+{% endif %}
+    <div class="card-block">
+      <a class="btn btn-info" href="/aposta_add">Cadastrar</a>
+    </div>
+{% endblock %}

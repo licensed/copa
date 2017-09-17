@@ -5,14 +5,38 @@
 {% if result %}
 {% for r in result %}
 <br>
+  {% if not r.placar_time1 %}
   <div class="card">
     <div class="card-block">
-      <p class="card-text text-justify">{{r.local}}: {{ r.time1_id }} Vs {{ r.time2_id }}</p>
+      <p class="card-text">Local: {{r.local}}</p>
+  <form>
+    <div class="form-group row">
+      <div class="col-xs-1">
+        <label for="ex1">{{ r.time1_id }}</label>
+        <input class="form-control" id="gols_time1" name="gols_time1" type="text">
+      </div>
+      <div class="col-xs-1">
+        <label for="ex2">{{ r.time2_id }}</label>
+        <input class="form-control" id="gols_time2" name="gols_time2" type="text">
+      </div>
+    </div>
+  </form>      
+      <a class="btn btn-info" href="{{ url_for('aposta_add', partida_id=r.id)}}">Apostar</a>      
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="card-block">
+      <p class="card-text text-justify">Local: {{r.local}}</p>
+      <p class="card-text text-justify">{{ r.time1_id }} Vs {{ r.time2_id }}</p>
       <p class="card-text text-justify">{{ r.placar_time1 }} - {{ r.placar_time2 }}</p>
     </div>
   </div>
-
+    {% endif %}  
     {% endfor %}
 </div>
 {% endif %}
+    <div class="card-block">
+      <a class="btn btn-info" href="{{ url_for('partida_add') }}">Cadastrar</a>
+    </div>
 {% endblock %}

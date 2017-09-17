@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Apostar</h3>
+{% if partida %}
+  <div class="card">
+    <div class="card-block">
+      <p class="card-text text-justify">{{partida.local}}: {{ partida.time1_id }} Vs {{ partida.time2_id }}</p>
+      <a class="btn btn-info" href="{{ url_for('aposta_add', partida_id=r.id) }}">Apostar</a>      
+    </div>
+  </div>
+  {% else %}
+  {% endif %}  
+</div>
+    <div class="card-block">
+      <a class="btn btn-info" href="{{ url_for('partida_add') }}">Cadastrar</a>
+    </div>
+{% endblock %}

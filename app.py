@@ -101,28 +101,6 @@ def aposta(aposta_id):
     return render_template("post.html", result=aposta)
 
 
-@app.route("/update/<int:uid>", methods=["POST", "GET"])
-@login_required
-def update(uid):
-    aposta = Aposta.query.filter_by(id=uid).first()
-    # user_id = User.query.filter_by(id=uid).first()
-    if request.method == "POST":
-        aposta.id = request.form["name"]
-        aposta.hora = datetime.now()
-        db.session.commit()
-        return redirect(url_for("result"))
-
-    return render_template("update.html", post=aposta)
-
-
-@app.route("/delete/<int:uid>")
-@login_required
-def delete(uid):
-    db.session.query(Time).filter_by(id=uid).delete()
-    db.session.commit()
-    return redirect(url_for("times"))
-
-
 @app.route("/times", methods=["POST", "GET"])
 @login_required
 # Sigla Nome Posicao
@@ -176,19 +154,20 @@ def time_delete(id):
 
 @app.route("/partidas", methods=["POST", "GET"])
 @login_required
-# Grupo Local Time1 Time2 placar_time1 placar_time2
+# Local Time1 Time2 placar_time1 placar_time2
 def partidas():
-    if request.method == "POST":
-        nome = request.form["nome"]
-        sigla = request.form["sigla"]
-        local = request.form["local"]
-        time = Time(nome=nome, sigla=sigla)
-        db.session.add(time)
-        db.session.commit()
-        return redirect(url_for("partidas"))
-    else:
-        partidas = Partida.query.all()
-        return render_template("partidas.html", result=partidas)
+    partidas = Partida.query.all()
+    return render_template("partidas.html", result=partidas)
+
+
+@app.route("/apostas", methods=["POST", "GET"])
+@login_required
+#
+def apostas():
+    apostas = Aposta.query.all()
+    for x in apostas:
+        print(x.partida_id)
+    return render_template("apostas.html", result=apostas)
 
 
 @app.route("/partida_add", methods=["POST", "GET"])
@@ -207,6 +186,21 @@ def partida_add():
         return redirect(url_for("partidas"))
     else:
         return render_template("partida_add.html", times=times)
+
+
+@app.route("/aposta_add/<int:partida_id>")
+@login_required
+#usuario, partida, placar_time1, placar_time2 (hora, edicao, pontuacao)
+def aposta_add(partida_id):
+    gols_time1 = request.form.get('gols_time1')
+    gols_time2 = request.form.get('gols_time2')
+    print("else", gols_time1)
+    if gols_time1 and gols_time2:
+        print("aew", gols_time1)
+        aposta = Aposta(usuario=current_user, partida_id=partida_id, placar_time1=gols_time1, placar_time2=gols_time2)
+        db.session.add(aposta)
+        db.session.commit()
+    return redirect(url_for("apostas"))
 
 
 @app.route("/logout")
