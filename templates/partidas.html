@@ -11,7 +11,7 @@
     <div class="card-block">
       <p class="card-text">Local: {{r.local}}</p>
       <p class="card-text text-justify">{{ r.time1_id }} Vs {{ r.time2_id }}</p>      
-  <form method="POST" action="/aposta_add">
+  <form class="form-group" method="POST" action="{{ url_for('aposta_add', partida_id=r.id) }}">
     <div class="form-group row">
       <div class="col-xs-1">
         <label for="ex1">{{ r.time1_id }}</label>
@@ -19,11 +19,18 @@
       </div>
       <div class="col-xs-1">
         <label for="ex2">{{ r.time2_id }}</label>
-        <input class="form-control" id="gols_time2" name="gols_time2" type="text">
+        <input class="form-control" id="gols_time2" name="gols_time2" type="text">                      
       </div>
+      <div class="col-xs-1">
+        <label for="ex2">Valor</label>
+        <input class="form-control" id="pontuacao" name="pontuacao" type="text">                      
+      </div>      
+      <input class="btn btn-info btn-sm" type="submit" name="" value="Apostar">          
     </div>
   </form>      
-      <a class="btn btn-info" href="{{ url_for('aposta_add', partida_id=r.id) }}">Apostar</a>
+      <a class="btn btn-success" href="{{ url_for("partida_update", id=r.id)}}">Edit</a>      
+      <a class="btn btn-danger" href="{{ url_for("partida_delete", id=r.id)}}">Delete</a>  
+<!--      <a class="btn btn-info" href="{{ url_for('aposta_add', partida_id=r.id) }}">Apostar</a> -->
   {% else %}
   <div class="card">
     <div class="card-block">
@@ -31,8 +38,6 @@
       <p class="card-text text-justify">{{ r.time1_id }} Vs {{ r.time2_id }}</p>
       <p class="card-text text-justify">{{ r.placar_time1 }} - {{ r.placar_time2 }}</p>
     {% endif %}        
-      <a class="btn btn-success" href="{{ url_for("partida_update", id=r.id)}}">Edit</a>      
-      <a class="btn btn-danger" href="{{ url_for("partida_delete", id=r.id)}}">Delete</a>            
     </div>
   </div>
     {% endfor %}

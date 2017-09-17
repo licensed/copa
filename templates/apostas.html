@@ -9,18 +9,17 @@
     <div class="card-block">
       {% if not r.partida.placar_time1 %}
       <p class="card-text text-justify">{{r.partida.local}}: {{ r.partida.time1_id }} Vs {{ r.partida.time2_id }}</p>
-      <p class="card-text text-justify">{{ r.placar_time1 }} X {{ r.placar_time2 }}</p>
+      <p class="card-text text-justify">{{ r.placar_time1 }} X {{ r.placar_time2 }} R${{ r.pontuacao }}</p>
+      <a class="btn btn-danger" href="{{ url_for("aposta_delete", id=r.id)}}">Delete</a>
+      <a class="btn btn-success" href="{{ url_for("aposta_update", id=r.id)}}">Edit</a>      
       {% else %}
       <p class="card-text text-justify">{{r.partida.local}}: {{ r.partida.time1_id }} Vs {{ r.partida.time2_id }}</p>
       <p class="card-text text-justify">{{ r.partida.placar_time1 }} X {{ r.partida.placar_time2 }}</p>
-      <p class="card-text text-justify">{{ r.placar_time1 }} X {{ r.placar_time2 }}</p>      
+      <p class="card-text text-justify">{{ r.placar_time1 }} X {{ r.placar_time2 }} R${{ r.pontuacao }}</p>
       {% endif %}
     </div>
   </div>
     {% endfor %}
 </div>
 {% endif %}
-    <div class="card-block">
-      <a class="btn btn-info" href="/aposta_add">Cadastrar</a>
-    </div>
 {% endblock %}

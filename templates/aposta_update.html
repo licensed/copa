@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Editar Aposta</h3>
+
+{% if aposta %}
+
+<div class="form">
+
+  <form class="form-group" action="" method="POST">
+
+    <div class="row">
+      <div class="col-12">
+        <label for="exampleInputPassword1">Placar Time 1</label>
+        <input type="text" class="form-control" name="placar_time1" value="{{ aposta.placar_time1 }}" id="placar_time1" placeholder="placar_time1">
+      </div>
+
+      <div class="col-12">
+        <label for="exampleInputPassword2">Placar Time 2</label>
+        <input type="text" class="form-control" name="placar_time2" value="{{ aposta.placar_time2 }}" id="placar_time2" placeholder="placar_time2">
+      </div>
+
+      <div class="col-12">
+        <label for="exampleInputPassword2">Valor</label>
+        <input type="text" class="form-control" name="pontuacao" value="{{ aposta.pontuacao }}" id="pontuacao" placeholder="pontuacao">
+      </div>
+
+      </div>
+    </div>
+    <br>
+    <br>
+    <input class="btn btn-info" type="submit" name="" value="Edit">
+
+  </form>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

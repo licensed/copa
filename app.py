@@ -100,16 +100,8 @@ def public():
 @login_required
 # Sigla Nome Posicao
 def times():
-    if request.method == "POST":
-        nome = request.form["nome"]
-        sigla = request.form["sigla"]
-        time = Time(nome=nome, sigla=sigla)
-        db.session.add(time)
-        db.session.commit()
-        return redirect(url_for("times"))
-    else:
-        times = Time.query.all()
-        return render_template("times.html", result=times)
+    times = Time.query.all()
+    return render_template("times.html", result=times)
 
 
 @app.route("/time_add", methods=["POST", "GET"])
@@ -151,11 +143,6 @@ def time_delete(id):
 @login_required
 # Local Time1 Time2 placar_time1 placar_time2
 def partidas():
-    print("PARTIDAS", request.method)
-    if request.method == "POST":
-        gols_time1 = request.args.get('gols_time1')
-        gols_time2 = request.args.get('gols_time2')
-        print(gols_time1, gols_time2)
     partidas = Partida.query.all()
     return render_template("partidas.html", result=partidas)
 
@@ -169,12 +156,33 @@ def aposta(aposta_id):
 @app.route("/apostas", methods=["POST", "GET"])
 @login_required
 def apostas(usuario=None):
-    if request.method == "POST":
-        pass
+    u = request.args.get('usuario')
+    if u:
+        apostas = Aposta.query.filter_by(usuario_id=u)
     else:
         apostas = Aposta.query.all()
-        return render_template("apostas.html", result=apostas)
+    return render_template("apostas.html", result=apostas)
 
+@app.route("/aposta_update/<int:id>", methods=["POST", "GET"])
+@login_required
+def aposta_update(id):
+    aposta = Aposta.query.filter_by(id=id).first()
+    if request.method == "POST":
+        print("post!!")
+        aposta.placar_time1 = request.form["placar_time1"]
+        aposta.placar_time2 = request.form["placar_time2"]
+        aposta.pontuacao = request.form["pontuacao"]
+        db.session.commit()
+        return redirect(url_for("apostas"))
+    return render_template("aposta_update.html", aposta=aposta)
+
+
+@app.route("/aposta_delete/<int:id>")
+@login_required
+def aposta_delete(id):
+    db.session.query(Aposta).filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for("apostas"))
 
 @app.route("/partida_add", methods=["POST", "GET"])
 @login_required
@@ -201,7 +209,6 @@ def partida_update(id):
         partida.placar_time1 = request.form["placar_time1"]
         partida.placar_time2 = request.form["placar_time2"]
         partida.local = request.form["local"]
-        print(partida.placar_time1)
         db.session.commit()
         return redirect(url_for("partidas"))
 
@@ -218,16 +225,18 @@ def partida_delete(id):
 
 @app.route("/aposta_add/<partida_id>", methods=["POST", "GET"])
 @login_required
-# usuario, partida, placar_time1, placar_time2 (hora, edicao, pontuacao)
 def aposta_add(partida_id):
     partida = Partida.query.filter_by(id=partida_id).first()
     if request.method == "POST":
-        gols_time1 = request.args.get('placar_time1')
-        gols_time2 = request.args.get('placar_time2')
+        gols_time1 = request.form.get('gols_time1')
+        gols_time2 = request.form.get('gols_time2')
+        pontuacao = request.form.get('pontuacao')
+        print(pontuacao)
         if gols_time1 and gols_time2:
-            aposta = Aposta(usuario=current_user, partida_id=partida_id, placar_time1=gols_time1, placar_time2=gols_time2)
+            aposta = Aposta(usuario=current_user, partida_id=partida_id, placar_time1=gols_time1, placar_time2=gols_time2, pontuacao=pontuacao)
             db.session.add(aposta)
             db.session.commit()
+        return redirect(url_for('apostas'))
     else:
         return render_template("aposta_add.html", partida=partida)
 
