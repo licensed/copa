@@ -1,0 +1,12 @@
+body {
+  background-color: white;
+  /*font-family: 'Open Sans', sans-serif;*/
+  /*font-family: 'Amatic SC', cursive;*/
+  font-family: 'Fira Mono', monospace;
+
+}
+
+.flashed {
+  font-family: 'VT323', monospace;
+  /*font-family: 'Amatic SC', cursive;*/
+}

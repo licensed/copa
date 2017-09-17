@@ -1,0 +1,4 @@
+flask==0.12.2
+flask-sqlalchemy==2.2
+flask-login==0.4.0
+flask-markdown==0.3
