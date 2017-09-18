@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Usuários</h3>
+{% for u in users %}
+<br>
+  <div class="card">
+    <div class="card-block">
+      <a href="{{ url_for("time_view", usuario=u.id)}}"</a> <p class="card-text text-justify">{{ u.username }}</p>
+    </div>
+  </div>
+    {% endfor %}
+{% endblock %}

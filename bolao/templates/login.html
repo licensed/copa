@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="form">
+
+  <form class="form-group" action="{{ url_for("login") }}" method="POST">
+
+<div class="">
+
+    <h3 class="col-10 text-right">Login</h3>
+
+    <div class="row">
+
+      <div class="col-10">
+        <label for="exampleInputUsername">Username</label>
+        <input type="text" class="form-control" name="username" id="exampleInputUsername" placeholder="Username">
+      </div>
+      <div class="col-10">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
+      </div>
+
+    </div>
+    <br>
+    <input class="btn btn-primary" type="submit" name="" value="Login">
+
+  </form>
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+{% endblock %}
