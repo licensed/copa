@@ -14,16 +14,16 @@
   <form class="form-group" method="POST" action="{{ url_for('aposta_add', partida_id=r.id) }}">
     <div class="form-group row">
       <div class="col-xs-1">
-        <label for="ex1">{{ r.time1_id }}</label>
-        <input class="form-control" id="gols_time1" name="gols_time1" type="text">
+        <label for="gols_time1">{{ r.time1_id }}</label>
+        <input class="form-control" id="gols_time1" name="gols_time1" type="text" value="{{aposta.placar_time1}}">
       </div>
       <div class="col-xs-1">
-        <label for="ex2">{{ r.time2_id }}</label>
-        <input class="form-control" id="gols_time2" name="gols_time2" type="text">                      
+        <label for="gols_time2">{{ r.time2_id }}</label>
+        <input class="form-control" id="gols_time2" name="gols_time2" type="text" value="{{aposta.placar_time1}}">                      
       </div>
       <div class="col-xs-1">
-        <label for="ex2">Valor</label>
-        <input class="form-control" id="pontuacao" name="pontuacao" type="text">                      
+        <label for="pontuacao">Valor da Aposta</label>
+        <input class="form-control" id="pontuacao" name="pontuacao" type="text" value="{{aposta.pontuacao}}">                      
       </div>      
       <input class="btn btn-info btn-sm" type="submit" name="" value="Apostar">          
     </div>
@@ -35,8 +35,11 @@
   <div class="card">
     <div class="card-block">
       <p class="card-text text-justify">Local: {{r.local}}</p>
-      <p class="card-text text-justify">{{ r.time1_id }} Vs {{ r.time2_id }}</p>
-      <p class="card-text text-justify">{{ r.placar_time1 }} - {{ r.placar_time2 }}</p>
+      <p class="card-text text-justify">Jogo: {{ r.time1_id }} Vs {{ r.time2_id }}</p>
+      <p class="card-text text-justify">Placar: {{ r.placar_time1 }} X {{ r.placar_time2 }}</p>
+      {% if aposta.partida is equalto r %}
+      <p class="card-text text-justify">Sua Aposta: {{ aposta.partida.id }} - {{ r.id }}</p>
+      {% endif %}
     {% endif %}        
     </div>
   </div>

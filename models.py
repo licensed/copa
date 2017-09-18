@@ -50,7 +50,7 @@ class Partida(db.Model):
     placar_time2 = db.Column(db.Integer)
 
     def __repr__(self):
-        return u"%s X %s" % (self.time1, self.time2)
+        return u"%s: %s X %s" % (self.id, self.time1, self.time2)
 
 
 class Aposta(db.Model):

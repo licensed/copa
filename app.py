@@ -144,7 +144,8 @@ def time_delete(id):
 # Local Time1 Time2 placar_time1 placar_time2
 def partidas():
     partidas = Partida.query.all()
-    return render_template("partidas.html", result=partidas)
+    aposta = Aposta.query.filter_by(usuario_id=current_user.id).first()
+    return render_template("partidas.html", result=partidas, aposta=aposta)
 
 
 @app.route("/aposta/<int:aposta_id>", methods=["POST", "GET"])
@@ -183,6 +184,7 @@ def aposta_delete(id):
     db.session.query(Aposta).filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for("apostas"))
+
 
 @app.route("/partida_add", methods=["POST", "GET"])
 @login_required
