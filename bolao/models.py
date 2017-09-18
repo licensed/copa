@@ -1,10 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy as conn
 from werkzeug.security import generate_password_hash as genpass
 from flask_login import UserMixin
 from datetime import datetime
-
-
-db = conn()
+from bolao import db
 
 
 class Login(UserMixin, db.Model):
@@ -33,10 +30,15 @@ class Time(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sigla = db.Column(db.String(3), unique=True)
     nome = db.Column(db.String(80))
-    posicao = db.Column(db.Integer)
+    posicao = db.Column(db.Integer, default=0)
+
+    def __init__(self, sigla, nome, posicao):
+        self.sigla=sigla
+        self.nome = nome
+        self.posicao = posicao
 
     def __repr__(self):
-        return self.nome
+        return '<%d - %d>' % (self.sigla, self.nome)
 
 
 class Partida(db.Model):
