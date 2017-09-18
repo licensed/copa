@@ -1,4 +1,4 @@
-import json
+import json, requests
 from flask import request, jsonify, Blueprint, abort, flash, redirect, url_for, render_template
 from flask.views import MethodView
 from flask_login import (LoginManager, current_user, login_required,
@@ -20,23 +20,10 @@ def user_loader(user_id):
     return Login.query.get(int(user_id))
 
 
-@bolao.route('/')
-@bolao.route('/home')
-def home():
-    return "Welcome to the Catalog Home."
-
-
 @app.route("/", methods=["POST", "GET"])
+@login_required
 def index():
     users = Login.query.all()
-    if request.method == "POST":
-        fname = request.form["name"]
-
-        aposta = Aposta(id=fname, usuario_id=current_user.id)
-        db.session.add(aposta)
-        db.session.commit()
-        return redirect(url_for("result"))
-
     return render_template("index.html", users=users)
 
 
@@ -92,6 +79,7 @@ def logout():
 
 
 class TimeView(MethodView):
+    #decorators = [login_required]
 
     def get(self, id=None, page=1):
         if not id:
@@ -115,10 +103,9 @@ class TimeView(MethodView):
         return jsonify(res)
 
     def post(self):
-        sigla = request.form.get('sigla')
-        nome = request.form.get('nome')
-        posicao = request.form.get('posicao')
-
+        sigla = request.json.get('sigla')
+        nome = request.json.get('nome')
+        posicao = request.json.get('posicao')
         time = Time(sigla, nome, posicao)
         db.session.add(time)
         db.session.commit()
@@ -130,43 +117,35 @@ class TimeView(MethodView):
 
     def put(self, id):
         time = Time.query.filter_by(id=id).first()
-        sigla = request.form.get('sigla') or time.sigla
-        nome = request.form.get('nome') or time.nome
-        posicao = request.form.get('posicao') or time.posicao
+        sigla = request.json['sigla'] or time.sigla
+        nome = request.json['nome'] or time.nome
+        posicao = request.json['posicao'] or time.posicao
         time.sigla = sigla
         time.nome = nome
         time.posicao = posicao
         db.session.commit()
-        return jsonify(time)
+        return self.get()
 
     def delete(self, id):
         time = Time.query.filter_by(id=id).first()
         db.session.delete(time)
         db.session.commit()
-        return jsonify(time)
+        return self.get()
 
 
 class ApostaView(MethodView):
 
     def get(self, id=None, page=1):
+
         if not id:
             apostas = Aposta.query.paginate(page, 10).items
-            res = {}
-            for aposta in apostas:
-                res[aposta.id] = {
-                    'usuario': aposta.usuario,
-                    'partida': aposta.partida,
-                    'placar_time1': aposta.placar_time1,
-                    'placar_time2': aposta.placar_time2,
-                    'hora': aposta.hora,
-                    'edicao': aposta.edicao,
-                    'pontuacao': aposta.pontuacao,
-                }
         else:
-            aposta = Aposta.query.filter_by(id=id).first()
-            if not aposta:
-                abort(404)
-            res = {
+            apostas = Aposta.query.filter_by(usuario_id=id).paginate(page, 10).items
+#        if not apostas:
+#            abort(404)
+        res = {}
+        for aposta in apostas:
+            res[aposta.id] = {
                 'usuario': aposta.usuario,
                 'partida': aposta.partida,
                 'placar_time1': aposta.placar_time1,
@@ -178,10 +157,10 @@ class ApostaView(MethodView):
         return jsonify(res)
 
     def post(self):
-        gols_time1 = request.form.get('gols_time1')
-        gols_time2 = request.form.get('gols_time2')
-        pontuacao = request.form.get('pontuacao')
-        partida = request.form.get('partida')
+        gols_time1 = request.json.get('gols_time1')
+        gols_time2 = request.json.get('gols_time2')
+        pontuacao = request.json.get('pontuacao')
+        partida = request.json.get('partida')
         if gols_time1 and gols_time2:
             aposta = Aposta(usuario=current_user, partida_id=partida,
                             placar_time1=gols_time1, placar_time2=gols_time2,
@@ -233,3 +212,12 @@ app.add_url_rule(
     '/aposta/<int:id>', view_func=aposta_view, methods=['GET', 'PUT', 'DELETE']
 )
 
+#url = 'http://localhost:5000'
+#@app.route("/times", methods=["POST", "GET"])
+#@login_required
+## Sigla Nome Posicao
+#def times():
+#    times = requests.get(url + url_for('time_view'))
+#    result = {}
+#    print(times)
+#    return "OK"#render_template("times.html", result=result)
