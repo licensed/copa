@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash as genpass
 from flask_login import UserMixin
 from datetime import datetime
 from bolao import db
+from sqlalchemy.orm import relationship
 
 
 class Login(UserMixin, db.Model):
@@ -32,8 +33,8 @@ class Time(db.Model):
     nome = db.Column(db.String(80))
     posicao = db.Column(db.Integer, default=0)
 
-    def __init__(self, sigla, nome, posicao):
-        self.sigla=sigla
+    def __init__(self, sigla, nome, posicao=0):
+        self.sigla = sigla
         self.nome = nome
         self.posicao = posicao
 
@@ -45,9 +46,9 @@ class Partida(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     local = db.Column(db.String(50))
     time1_id = db.Column(db.Integer, db.ForeignKey('time.id'))
-    time1 = db.relationship('Time', foreign_keys=time1_id)
+    time1 = db.relationship('Time', foreign_keys='Partida.time1_id')
     time2_id = db.Column(db.Integer, db.ForeignKey('time.id'))
-    time2 = db.relationship('Time', foreign_keys=time2_id)
+    time2 = db.relationship('Time', foreign_keys='Partida.time2_id')
     placar_time1 = db.Column(db.Integer)
     placar_time2 = db.Column(db.Integer)
 
@@ -57,10 +58,9 @@ class Partida(db.Model):
         self.time2_id = time2
         self.placar_time1 = placar_time1
         self.placar_time2 = placar_time2
-        
 
-    def __repr__(self):
-        return u"%s: %s X %s" % (self.id, self.time1, self.time2)
+#    def __repr__(self):
+#        return u"%s: %s X %s" % (self.id, self.time1, self.time2)
 
 
 class Aposta(db.Model):
@@ -71,11 +71,11 @@ class Aposta(db.Model):
     partida = db.relationship('Partida', foreign_keys=partida_id)
     placar_time1 = db.Column(db.Integer)
     placar_time2 = db.Column(db.Integer)
-    hora = db.Column(db.DateTime(), default=datetime.now())
-    edicao = db.Column(db.DateTime())
     pontuacao = db.Column(db.Integer, default=0)
     __table_args__ = (db.UniqueConstraint('usuario_id', 'partida_id',
                                           name='aposta'),)
 
-    def __repr__(self):
-        return "Apostas {}".format(self.id)
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+#    def __repr__(self):
+#        return "Apostas {}".format(self.id)

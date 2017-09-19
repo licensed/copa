@@ -13,13 +13,13 @@
 
             <select name="time1" class="selectpicker form-control">
               {% for t in times %}
-              <option value="{{ t }}">{{ t }}</option>
+              <option name="{{ t }}">{{ t }}</option>
               {% endfor %}
             </select>
             <input type="text" class="form-control" id="placar_time1" placeholder="Gols" name="placar_time1">
             <select name="time2" class="selectpicker form-control">
               {% for t in times %}
-              <option value="{{ t }}">{{ t }}</option>
+              <option name="{{ t }}">{{ t }}</option>
               {% endfor %}
             </select>
             <input type="text" class="form-control" id="placar_time2" placeholder="Gols" name="placar_time2">

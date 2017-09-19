@@ -11,12 +11,12 @@
       <a class="btn btn-danger" href="{{ url_for("time_delete", id=r.id)}}">Delete</a>
       <a class="btn btn-success" href="{{ url_for("time_update", id=r.id)}}">Edit</a>
     </div>
-  </div>
-
     {% endfor %}
+    {% endif %}   
     <div class="card-block">
-      <a class="btn btn-info" href="/time_add">Cadastrar</a>
+    <a class="btn btn-info" href="/time_add">Cadastrar</a>
     </div>
+  </div>
 </div>
-{% endif %}
+    
 {% endblock %}

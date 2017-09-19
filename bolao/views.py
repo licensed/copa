@@ -146,8 +146,8 @@ class PartidaView(MethodView):
             for partida in partidas:
                 res[partida.id] = {
                     'local': partida.local,
-                    'time1': partida.time1,
-                    'time2': partida.time2,
+                    'time1': partida.time1_id,
+                    'time2': partida.time2_id,
                     'placar_time1': partida.placar_time1,
                     'placar_time2': partida.placar_time2,
                 }
@@ -168,9 +168,10 @@ class PartidaView(MethodView):
         local = request.form.get('local')
         time1 = request.form.get('time1')
         time2 = request.form.get('time2')
-        local_time1 = request.form.get('local_time1')
-        local_time2 = request.form.get('local_time2')
-        partida = Partida(local, time1, time2, local_time1, local_time2)
+        placar_time1 = request.form.get('placar_time1')
+        placar_time2 = request.form.get('placar_time2')
+        print(placar_time1)
+        partida = Partida(local, time1, time2, placar_time1, placar_time2)
         db.session.add(partida)
         db.session.commit()
         return jsonify({partida.id: {
@@ -223,8 +224,6 @@ class ApostaView(MethodView):
                 'partida': aposta.partida,
                 'placar_time1': aposta.placar_time1,
                 'placar_time2': aposta.placar_time2,
-                'hora': aposta.hora,
-                'edicao': aposta.edicao,
                 'pontuacao': aposta.pontuacao,
             }
         return jsonify(res)
@@ -245,8 +244,6 @@ class ApostaView(MethodView):
             'partida': aposta.partida,
             'placar_time1': aposta.placar_time1,
             'placar_time2': aposta.placar_time2,
-            'hora': aposta.hora,
-            'edicao': aposta.edicao,
             'pontuacao': aposta.pontuacao,
         }})
 
@@ -255,11 +252,9 @@ class ApostaView(MethodView):
         placar_time1 = request.form.get('placar_time1') or aposta.placar_time1
         placar_time2 = request.form.get('placar_time2') or aposta.placar_time2
         pontuacao = request.form.get('pontuacao') or aposta.pontuacao
-        edicao = datetime.now()
         aposta.placar_time1 = placar_time1
         aposta.placar_time2 = placar_time2
         aposta.pontuacao = pontuacao
-        aposta.edicao = edicao
         db.session.commit()
         return jsonify(aposta)
 
@@ -293,12 +288,12 @@ app.add_url_rule(
     '/aposta/<int:id>', view_func=aposta_view, methods=['GET', 'PUT', 'DELETE']
 )
 
+
 @app.route("/times", methods=["POST", "GET"])
-@login_required
-# Sigla Nome Posicao
 def times():
     times = Time.query.all()
     return render_template("times.html", result=times)
+
 
 @app.route("/time_add", methods=["POST", "GET"])
 @login_required
@@ -333,3 +328,114 @@ def time_delete(id):
     db.session.query(Time).filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for("times"))
+
+
+@app.route("/partidas", methods=["POST", "GET"])
+@login_required
+# Local Time1 Time2 placar_time1 placar_time2
+def partidas():
+    # Caso clique em apostar, a aposta eh enviada via POST e persistida no bd aqui
+    if request.method == "POST":
+        pass
+    else:
+        partidas = Partida.query.all()
+        aposta = Aposta.query.filter_by(usuario_id=current_user.id).all()
+        return render_template("partidas.html", partidas=partidas, aposta=aposta)
+
+
+@app.route("/partida_add", methods=["POST", "GET"])
+@login_required
+def partida_add():
+    times = Time.query.all()
+    if request.method == "POST":
+        local = request.form.get('local')
+        time1 = request.form.get('time1')
+        time2 = request.form.get('time2')
+        print("AEW", type(time1), time1)
+        placar_time1 = request.form['placar_time1']
+        placar_time2 = request.form['placar_time2']
+        partida = Partida(local=local, time1=time1, time2=time2,
+                          placar_time1=placar_time1, placar_time2=placar_time2)
+        db.session.add(partida)
+        db.session.commit()
+        return redirect(url_for("partidas"))
+    else:
+        return render_template("partida_add.html", times=times)
+
+
+@app.route("/partida_update/<int:id>", methods=["POST", "GET"])
+@login_required
+def partida_update(id):
+    partida = Partida.query.filter_by(id=id).first()
+    if request.method == "POST":
+        partida.placar_time1 = request.form["placar_time1"]
+        partida.placar_time2 = request.form["placar_time2"]
+        partida.local = request.form["local"]
+        db.session.commit()
+        return redirect(url_for("partidas"))
+
+    return render_template("partida_update.html", partida=partida)
+
+
+@app.route("/partida_delete/<int:id>")
+@login_required
+def partida_delete(id):
+    db.session.query(Partida).filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for("partidas"))
+
+
+@app.route("/apostas", methods=["POST", "GET"])
+@login_required
+def apostas(usuario=None):
+    if request.method == "POST":
+        pass
+    else:
+        u = request.args.get('usuario')
+        if u:
+            apostas = Aposta.query.filter_by(usuario_id=u)
+        else:
+            apostas = Aposta.query.all()
+        return render_template("apostas.html", result=apostas)
+
+
+@app.route("/aposta_add/<int:partida_id>", methods=["POST", "GET"])
+@login_required
+def aposta_add(partida_id):
+    aposta = Aposta.query.filter_by(usuario=current_user).all()
+    if request.method == "POST":
+        apostado = Aposta.query.filter_by(usuario=current_user, partida_id = partida_id).first()
+        if apostado:
+            flash("Você já apostou nessa partida")
+            return redirect(url_for("partidas"))
+        else:
+            gols_time1 = request.form.get('gols_time1')
+            gols_time2 = request.form.get('gols_time2')
+            pontuacao = request.form.get('pontuacao')
+            aposta = Aposta(partida_id=partida_id, placar_time1=gols_time1, placar_time2=gols_time2,
+                            usuario=current_user, pontuacao=pontuacao)
+            db.session.add(aposta)
+            db.session.commit()
+            return redirect(url_for("apostas"))
+    return render_template("apostas.html", aposta=aposta)
+
+
+@app.route("/aposta_update/<int:id>", methods=["POST", "GET"])
+@login_required
+def aposta_update(id):
+    aposta = Aposta.query.filter_by(id=id).first()
+    if request.method == "POST":
+        aposta.placar_time1 = request.form["placar_time1"]
+        aposta.placar_time2 = request.form["placar_time2"]
+        aposta.pontuacao = request.form["pontuacao"]
+        db.session.commit()
+        return redirect(url_for("apostas"))
+    return render_template("aposta_update.html", aposta=aposta)
+
+
+@app.route("/aposta_delete/<int:id>")
+@login_required
+def aposta_delete(id):
+    db.session.query(Aposta).filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for("apostas"))
