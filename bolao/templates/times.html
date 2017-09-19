@@ -8,8 +8,8 @@
   <div class="card">
     <div class="card-block">
       <p class="card-text text-justify">{{ r.sigla }} - {{ r.nome }}</p>
-      <a class="btn btn-danger" href="{{ url_for("times", id=r.id)}}">Delete</a>
-      <a class="btn btn-success" href="{{ url_for("times", id=r.id)}}">Edit</a>
+      <a class="btn btn-danger" href="{{ url_for("time_delete", id=r.id)}}">Delete</a>
+      <a class="btn btn-success" href="{{ url_for("time_update", id=r.id)}}">Edit</a>
     </div>
   </div>
 

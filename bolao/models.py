@@ -38,7 +38,7 @@ class Time(db.Model):
         self.posicao = posicao
 
     def __repr__(self):
-        return '<%d - %d>' % (self.sigla, self.nome)
+        return self.sigla
 
 
 class Partida(db.Model):
@@ -50,6 +50,14 @@ class Partida(db.Model):
     time2 = db.relationship('Time', foreign_keys=time2_id)
     placar_time1 = db.Column(db.Integer)
     placar_time2 = db.Column(db.Integer)
+
+    def __init__(self, local, time1, time2, placar_time1=None, placar_time2=None):
+        self.local = local
+        self.time1_id = time1
+        self.time2_id = time2
+        self.placar_time1 = placar_time1
+        self.placar_time2 = placar_time2
+        
 
     def __repr__(self):
         return u"%s: %s X %s" % (self.id, self.time1, self.time2)

@@ -17,5 +17,5 @@ db = conn(app)
 
 from bolao.views import bolao
 app.register_blueprint(bolao)
-
+#app.run(threaded=True)
 db.create_all()
